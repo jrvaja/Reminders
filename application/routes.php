@@ -2,39 +2,17 @@
 
 /*
 |--------------------------------------------------------------------------
-| Application Routes
+| Authentication
 |--------------------------------------------------------------------------
-|
-| Simply tell Laravel the HTTP verbs and URIs it should respond to. It is a
-| breeze to setup your application using Laravel's RESTful routing and it
-| is perfectly suited for building large applications and simple APIs.
-|
-| Let's respond to a simple GET request to http://example.com/hello:
-|
-|		Route::get('hello', function()
-|		{
-|			return 'Hello World!';
-|		});
-|
-| You can even respond to more than one URI:
-|
-|		Route::post(array('hello', 'world'), function()
-|		{
-|			return 'Hello World!';
-|		});
-|
-| It's easy to allow URI wildcards using (:num) or (:any):
-|
-|		Route::put('hello/(:any)', function($name)
-|		{
-|			return "Welcome, $name.";
-|		});
-|
 */
-
 Route::get('login', function()
 {
 	return View::make('login');
+});
+
+Route::get('logout', function() {
+	Auth::logout();
+	return Redirect::to('login');
 });
 
 Route::post('login', function() {
@@ -48,12 +26,12 @@ Route::post('login', function() {
 	}
 });
 
-Route::get('logout', function() {
-	Auth::logout();
-	return Redirect::to('login');
-});
 
-// reminders
+/*
+|--------------------------------------------------------------------------
+| All Reminders
+|--------------------------------------------------------------------------
+*/
 Route::get('/', ['before' => 'auth', function() {
 	$data = [];
 
@@ -61,12 +39,16 @@ Route::get('/', ['before' => 'auth', function() {
 	return View::make('reminders.index', $data);
 }]);
 
-// New Reminder
+
+/*
+|--------------------------------------------------------------------------
+| Create Reminders
+|--------------------------------------------------------------------------
+*/
 Route::get('new', function() {
 	return View::make('reminders.new');
 });
 
-// Create Reminder
 Route::post('/', function() {
 	// Validate
 	$input = Input::all();
@@ -94,7 +76,12 @@ Route::post('/', function() {
 	return Redirect::to('/')->with('flash', 'Your reminder has been scheduled!');
 });
 
-// Show Reminder
+
+/*
+|--------------------------------------------------------------------------
+| Show Single Reminder
+|--------------------------------------------------------------------------
+*/
 Route::get('(:num)', function($reminder_id) {
 	$reminder = Reminder::find((int)$reminder_id);
 
@@ -105,15 +92,12 @@ Route::get('(:num)', function($reminder_id) {
 	return View::make('reminders.show')->with('reminder', $reminder);
 });
 
-// Delete Reminder
-Route::delete('(:num)', function($reminder_id) {
-	Reminder::find($reminder_id)->delete();
 
-	return Redirect::to('/');
-});
-
-
-// Update Reminder
+/*
+|--------------------------------------------------------------------------
+| Update Reminder
+|--------------------------------------------------------------------------
+*/
 Route::put('(:num)', function($reminder_id) {
 	$reminder = Reminder::find($reminder_id);
 	$reminder->title = Input::get('title');
@@ -123,6 +107,19 @@ Route::put('(:num)', function($reminder_id) {
 
 	return Redirect::to('/')->with('flash', 'Your reminder has been updated!');
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| Delete Reminder
+|--------------------------------------------------------------------------
+*/
+Route::delete('(:num)', function($reminder_id) {
+	Reminder::find($reminder_id)->delete();
+
+	return Redirect::to('/');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Application 404 & 500 Error Handlers
