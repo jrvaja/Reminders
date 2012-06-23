@@ -89,6 +89,13 @@ Route::get('(:num)', function($reminder_id) {
 	return View::make('reminders.show')->with('reminder', $reminder);
 });
 
+// Delete Reminder
+Route::delete('(:num)', function($reminder_id) {
+	Reminder::find($reminder_id)->delete();
+
+	return Redirect::to('/');
+});
+
 
 // Update Reminder
 Route::put('(:num)', function($reminder_id) {
