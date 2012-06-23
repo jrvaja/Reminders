@@ -8,13 +8,15 @@ class Users_Db_Task {
 		User::create([
 			'first_name' => 'Jeffrey',
 			'last_name'  => 'Way',
-			'email'		 => 'jeffrey@envato.com'
+			'email'		 => 'jeffrey@envato.com',
+			'password'   => Hash::make('1234')
 		]);
 
 		User::create([
 			'first_name' => 'Allison',
 			'last_name'  => 'Peterson',
-			'email'		 => 'wayallie@gmail.com'
+			'email'		 => 'wayallie@gmail.com',
+			'password'   => Hash::make('1234')
 		]);
 	}
 }
