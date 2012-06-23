@@ -86,7 +86,7 @@ Route::post('/', function() {
 | Show Single Reminder
 |--------------------------------------------------------------------------
 */
-Route::get('(:num)', function($reminder_id) {
+Route::get('(:num)', ['before' => 'auth', function($reminder_id) {
 	$reminder = Reminder::find((int)$reminder_id);
 
 	if ( !$reminder || $reminder->user_id !== Auth::user()->id ) {
@@ -94,7 +94,7 @@ Route::get('(:num)', function($reminder_id) {
 	}
 	
 	return View::make('reminders.show')->with('reminder', $reminder);
-});
+}]);
 
 
 /*
