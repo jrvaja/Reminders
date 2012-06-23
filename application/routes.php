@@ -34,8 +34,12 @@ Route::post('login', function() {
 */
 Route::get('/', ['before' => 'auth', function() {
 	$data = [];
+	$data['reminders'] = 
+		User::find(Auth::user()->id)
+			->reminders()
+			->order_by('send_date', 'asc')
+			->get();
 
-	$data['reminders'] = User::find(Auth::user()->id)->reminders;
 	return View::make('reminders.index', $data);
 }]);
 
