@@ -38,8 +38,25 @@ Route::get(['/', 'login'], function()
 });
 
 Route::post('login', function() {
-	return 'posted';
+	$email = Input::get('email');
+	$password = Input::get('password');
+
+	if ( Auth::attempt(['username' => $email, 'password' => $password]) ) {
+		return Redirect::to('user');
+	} else {
+		return Redirect::to('login')->with('login_errors', true);
+	}
 });
+
+Route::get('logout', function() {
+	Auth::logout();
+	return Redirect::to('login');
+});
+
+// USER
+Route::get('user', ['before' => 'auth', function() {	
+	return View::make('user.index');
+}]);
 
 /*
 |--------------------------------------------------------------------------
