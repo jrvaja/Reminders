@@ -32,7 +32,7 @@
 |
 */
 
-Route::get(['/', 'login'], function()
+Route::get('login', function()
 {
 	return View::make('login');
 });
@@ -42,7 +42,7 @@ Route::post('login', function() {
 	$password = Input::get('password');
 
 	if ( Auth::attempt(['username' => $email, 'password' => $password]) ) {
-		return Redirect::to('user');
+		return Redirect::to('/');
 	} else {
 		return Redirect::to('login')->with('login_errors', true);
 	}
@@ -53,11 +53,53 @@ Route::get('logout', function() {
 	return Redirect::to('login');
 });
 
-// USER
-Route::get('user', ['before' => 'auth', function() {	
-	return View::make('user.index');
+// reminders
+Route::get('/', ['before' => 'auth', function() {
+	$data = [];
+
+	$data['reminders'] = User::find(Auth::user()->id)->reminders;
+	return View::make('reminders.index', $data);
 }]);
 
+// New Reminder
+Route::get('new', function() {
+	return View::make('reminders.new');
+});
+
+// Create Reminder
+Route::post('/', function() {
+	$reminder = new Reminder;
+	$reminder->title = Input::get('title');
+	$reminder->user_id = Auth::user()->id;
+	$reminder->message = Input::get('message');
+	$reminder->send_date = Input::get('send-date');
+	$reminder->save();
+
+	return Redirect::to('/')->with('flash', 'Your reminder has been scheduled!');
+});
+
+// Show Reminder
+Route::get('(:num)', function($reminder_id) {
+	$reminder = Reminder::find((int)$reminder_id);
+
+	if ( !$reminder || $reminder->user_id !== Auth::user()->id ) {
+		return Redirect::to('/');
+	}
+	
+	return View::make('reminders.show')->with('reminder', $reminder);
+});
+
+
+// Update Reminder
+Route::put('(:num)', function($reminder_id) {
+	$reminder = Reminder::find($reminder_id);
+	$reminder->title = Input::get('title');
+	$reminder->message = Input::get('message');
+	$reminder->send_date = Input::get('send-date');
+	$reminder->save();
+
+	return Redirect::to('/')->with('flash', 'Your reminder has been updated!');
+});
 /*
 |--------------------------------------------------------------------------
 | Application 404 & 500 Error Handlers

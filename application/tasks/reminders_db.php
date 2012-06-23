@@ -13,7 +13,7 @@ class Reminders_Db_Task {
 		]);
 
 		Reminder::create([
-			'user_id'   => 1,
+			'user_id'   => 2,
 			'title'     => 'Go to store',
 			'message'   => 'We need groceries',
 			'send_date' => '2012/06/28'
