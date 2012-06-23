@@ -68,6 +68,22 @@ Route::get('new', function() {
 
 // Create Reminder
 Route::post('/', function() {
+	// Validate
+	$input = Input::all();
+	$rules = [
+		'title' 	=> 'required',
+		'message' 	=>  'required',
+		'send-date'	=> 'required'
+	];
+
+	$validation = Validator::make($input, $rules);
+
+	if ( $validation->fails() ) {
+		Input::flash();
+		return Redirect::to('/')->with_errors($validation);
+	}
+
+	// Insert into DB
 	$reminder = new Reminder;
 	$reminder->title = Input::get('title');
 	$reminder->user_id = Auth::user()->id;
