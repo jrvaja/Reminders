@@ -32,9 +32,9 @@
 |
 */
 
-Route::get('/', function()
+Route::get('/, login', function()
 {
-	return View::make('home.index');
+	return View::make('login');
 });
 
 /*
