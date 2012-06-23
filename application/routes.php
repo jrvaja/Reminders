@@ -32,9 +32,13 @@
 |
 */
 
-Route::get('/, login', function()
+Route::get(['/', 'login'], function()
 {
 	return View::make('login');
+});
+
+Route::post('login', function() {
+	return 'posted';
 });
 
 /*
