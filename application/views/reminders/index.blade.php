@@ -4,13 +4,14 @@
 @section('content')
 	<h2> Your Reminders</h2>
 
-	<ul>
+	<ol>
 	@foreach ($reminders as $r)
 		<li>
-			{{ HTML::link("{$r->id}", $r->title) }}
+			{{ HTML::link("{$r->id}", $r->title) }} -
+			<span class="date">To Be Sent On: {{ date('Y-m-d', strtotime($r->send_date)) }}</span>
 		</li>
 	@endforeach
-	</ul>
+	</ol>
 
 	<h2> Create </h2>
 	@if ( Session::has('flash') )
