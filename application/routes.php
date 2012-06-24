@@ -120,9 +120,20 @@ Route::put('(:num)', function($reminder_id) {
 */
 Route::delete('(:num)', function($reminder_id) {
 	Reminder::find($reminder_id)->delete();
-
 	return Redirect::to('/');
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| CRON - Filter through today's messages, and send them out
+|--------------------------------------------------------------------------
+*/
+Route::get('cron/send', function() {
+	$reminders = Reminder::find_todays_reminders();
+	return Reminder::notify($reminders);
+});
+
 
 /*
 |--------------------------------------------------------------------------
