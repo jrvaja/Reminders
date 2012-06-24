@@ -15,7 +15,7 @@ class Reminder extends Eloquent {
 	public static function find_todays_reminders()
 	{
 		// Get all of today's reminders
-		return DB::query('SELECT title, message, email, users.first_name, users.last_name  
+		return DB::query('SELECT reminders.id, title, message, email, users.first_name, users.last_name  
 						  FROM reminders 
 						  INNER JOIN users
 						  ON reminders.user_id = users.id 
@@ -30,28 +30,13 @@ class Reminder extends Eloquent {
 	public static function notify($reminders)
 	{
 		if ( !empty($reminders) ) {
-			$email_settings = include('email.config');
-
-			// Create the Transport
-			$transport = Swift_SmtpTransport::newInstance($email_settings['smtp'], $email_settings['smtp_port'], 'ssl')
-				->setUsername($email_settings['username'])
-				->setPassword($email_settings['password']);
-
+			$email = new Email;
 			foreach($reminders as $reminder) {
-				$mailer = Swift_Mailer::newInstance($transport);
-
-				$message = Swift_Message::newInstance($reminder->title)
-					->setFrom(array('jeffrey@envato.com' => 'Reminders.dev'))
-					->setTo(array($reminder->email => $reminder->first_name . ' ' . $reminder->last_name))
-					->setBody($email_settings['template']($reminder), 'text/html');
-
-				// Send the message
-				$result = $mailer->send($message);
+				$email->send_reminder($reminder);
+				Reminder::find($reminder->id)->delete();
 			}
-
 			return 'Messages have been sent.';
-		} else {
-			return 'No reminders today.';
 		}
+		return 'No reminders today.';
 	}
 }
